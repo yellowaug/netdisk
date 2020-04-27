@@ -10,8 +10,14 @@ namespace NetdiskManager
     {
         static void Main(string[] args)
         {
-            TopMuem topMuem = new TopMuem();
-            topMuem.Stratmuem();
+            //TopMuem topMuem = new TopMuem();
+            //topMuem.Stratmuem();
+            //ConsonlenList consonlenList = new ConsonlenList();
+            //Shell shell= consonlenList.PWSComand();
+            //Console.WriteLine(shell.ShellMountNetDisk);
+            //Console.WriteLine(shell.ShellUnmountNetdisk);
+            InvokePWshell invokePWshell = new InvokePWshell();
+            invokePWshell.MountDiskShell();
             Console.ReadKey();
         }
     }

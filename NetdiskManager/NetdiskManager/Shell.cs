@@ -11,18 +11,24 @@ namespace NetdiskManager
         public string ServerHost { get; set; }
         public string DiskPath { get; set; }
         public string FolderPath { get; set; }
-        public string ShellConsolen { get; set; }
+        public string ShellMountNetDisk { get; set; }
+        public string ShellUnmountNetdisk { get; set; }
     }
     public class ConsonlenList
     {
-        
-        public void PWSComand()
+        /// <summary>
+        /// 配置连接服务器网盘的信息以及配置挂载网盘的语句，删除网盘的语句
+        /// </summary>
+        /// <returns></returns>
+        public Shell PWSComand()
         {
             Shell shell = new Shell();
             shell.ServerHost = "10.12.2.19";
             shell.DiskPath = "z";
             shell.FolderPath = "test";
-            shell.ShellConsolen = $"New-PSDrive -Name " + shell.DiskPath + " -PSProvider FileSystem -Root '\\\\" + shell.ServerHost + $"\\" + shell.FolderPath + $"'-Persist -Scope Global";
+            shell.ShellMountNetDisk = $"New-PSDrive -Name " + shell.DiskPath + " -PSProvider FileSystem -Root '\\\\" + shell.ServerHost + $"\\" + shell.FolderPath + $"' -Persist -Scope Global";
+            shell.ShellUnmountNetdisk = $"Remove-PSDrive -Name " + shell.DiskPath + " -Force";
+            return shell;
         }
         
     }
