@@ -24,10 +24,10 @@ namespace NetdiskManager
         {
             Shell shell = new Shell();
             shell.ServerHost = "10.12.2.19";
-            shell.DiskPath = "z";
+            shell.DiskPath = "Z";
             shell.FolderPath = "test";
-            shell.ShellMountNetDisk = $"New-PSDrive -Name " + shell.DiskPath + " -PSProvider FileSystem -Root '\\\\" + shell.ServerHost + $"\\" + shell.FolderPath + $"' -Persist -Scope Global";
-            shell.ShellUnmountNetdisk = $"Remove-PSDrive -Name " + shell.DiskPath + " -Force";
+            shell.ShellMountNetDisk = "New-PSDrive";
+            shell.ShellUnmountNetdisk = "Remove-PSDrive";
             return shell;
         }
         
