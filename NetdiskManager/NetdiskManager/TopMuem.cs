@@ -30,7 +30,12 @@ namespace NetdiskManager
             Console.WriteLine("=================================");
             Console.Write("请选择功能(输入完成按回车进入)：");
             return int.Parse(Console.ReadLine());
-        }       
+        }
+        public void SecondMenu()
+        {
+            Console.WriteLine();
+            Console.WriteLine("8:\t退\t出\t项\t目\t");                        
+        }
     }
     public class InitUser
     {
@@ -38,9 +43,9 @@ namespace NetdiskManager
         /// 初始化用户信息，用户输入，账号密码小组号写入数据库
         /// </summary>
         /// <returns></returns>
-        public UserInfo Init()
+        public UserInfo Init(UserInfo userInfo)
         {
-            UserInfo userInfo = new UserInfo();
+            
             Console.WriteLine("请输入用户名：");
             userInfo.UserName= Console.ReadLine();
             if (userInfo.UserName!=null)
@@ -82,9 +87,9 @@ namespace NetdiskManager
         /// 登录的提示页面
         /// </summary>
         /// <returns>返回键盘输入的用户名密码对象</returns>
-        public UserInfo LoginUserInfo()
+        public UserInfo LoginUserInfo(UserInfo userInfo)
         {
-            UserInfo userInfo = new UserInfo();
+            
             Console.WriteLine("请输入用户名：");
             userInfo.UserName = Console.ReadLine();
             Console.WriteLine("====================");

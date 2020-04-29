@@ -29,13 +29,21 @@ namespace NetdiskManager
             //new Program().FunctionprojectLists(conndetail);
             //CMDScript script = new CMDScript();
             //script.Cmditem();
+            #region redis测试代码
+            //Conndetail conndetail = new Conndetail();
+            //conndetail.ServerHost = "127.0.0.1";
+            //RedisModel redisModel = new RedisModel();
+            //var redisc= redisModel.connectionRedis(conndetail);
+            //redisModel.SetLoginStatus("test1", redisc);
+            #endregion
+
             #endregion
             while (true)
             {
-               new Program().MenuAction();
+                new Program().MenuAction();
             }
-            
-            //Console.ReadKey();
+
+            Console.ReadKey();
         }
         /// <summary>
         /// 数据库连接初始化
@@ -44,8 +52,8 @@ namespace NetdiskManager
         Conndetail InitConnet()
         {
             Conndetail conndetail = new Conndetail();
-            conndetail.ServerHost = "10.12.2.61";
-            //conndetail.ServerHost = "127.0.0.1";
+            //conndetail.ServerHost = "10.12.2.61";
+            conndetail.ServerHost = "127.0.0.1";
             conndetail.DBName = "TestDemo";
             conndetail.DbUser = "sa";
             conndetail.DbPassword = "sa";
@@ -54,79 +62,118 @@ namespace NetdiskManager
         /// <summary>
         /// 主菜单操作逻辑
         /// </summary>
+        static UserInfo loginUserinfo = new UserInfo();
         void MenuAction()
         {
+            NetCarModel carMac = new NetCarModel();
             Conndetail conndetail = new Program().InitConnet();
             TopMuem topMuem = new TopMuem();
             CMDScript cmdscript = new CMDScript();
-
-            int changecode=topMuem.Stratmuem();
-            if (changecode==1)
+            RedisModel redis = new RedisModel();
+            var db= redis.connectionRedis(conndetail);
+            NetCarInfo netCarInfo= carMac.GetNetCarMac();
+            string loginstatus= redis.GetLoginStatus(netCarInfo.NetCarMac, db);
+            if (loginstatus==null)
             {
-                int loginCode = FunctionUserLoginInvoke(conndetail);
-                if (loginCode==1)
+                #region 第一次登录的页面
+                int changecode = topMuem.Stratmuem();
+                if (changecode == 1)
+                {
+                    int loginCode = FunctionUserLoginInvoke(conndetail, loginUserinfo);
+                    if (loginCode == 1)
+                    {
+                        
+                        Console.Clear();
+                        redis.SetLoginStatus(loginUserinfo.UserName, db, netCarInfo.NetCarMac);
+                        Console.WriteLine("登录成功");
+                        Console.WriteLine();
+                        int code = FunctionprojectLists(conndetail);
+                        string path = FunctionprojectPath(conndetail, code);
+                        //挂载网盘
+                        //new InvokePWshell().MountDiskShell(path);
+                        string cmdcls = cmdscript.MountNetDiskScript(path);
+                        cmdscript.RunCMDscript(cmdcls);
+                        Console.Clear();
+
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine("登录失败，重新登录");
+                    }
+
+                }
+                else if (changecode == 8)
                 {
                     Console.Clear();
-                    Console.WriteLine("登录成功");
-                    Console.WriteLine();
-                    int code =FunctionprojectLists(conndetail);
-                    string path=FunctionprojectPath(conndetail, code);
-                    //挂载网盘
-                    //new InvokePWshell().MountDiskShell(path);
-                    string cmdcls = cmdscript.MountNetDiskScript(@"Z:",path);
-                    cmdscript.RunCMDscript(cmdcls);
+                    Console.Write("请输入要删除的盘符：");
+                    string inputitem = Console.ReadLine();
+                    string cmd = cmdscript.UnMountNetDiskScript(inputitem);
+                    cmdscript.RunCMDscript(cmd);
                     Console.Clear();
+
+                }
+                else if (changecode == 9)
+                {
+                    FunctionUserInitInvoke(conndetail, loginUserinfo);
+                    Console.Clear();
+                }
+                if (changecode == 0)
+                {
                     
                 }
-                else 
+                #endregion
+            }
+            else if (loginstatus!=null)
+            {
+                #region 非第一次登录的页面
+                topMuem.SecondMenu();
+                
+                int code = FunctionprojectLists(conndetail);
+                
+                if (code!=8)
+                {
+                    string path = FunctionprojectPath(conndetail, code);
+                    //挂载网盘
+                    //new InvokePWshell().MountDiskShell(path);
+                    string cmdcls = cmdscript.MountNetDiskScript(path);
+                    cmdscript.RunCMDscript(cmdcls);
+                }
+                else if (code==8)
                 {
                     Console.Clear();
-                    Console.WriteLine("登录失败，重新登录");                    
+                    Console.Write("请输入要删除的盘符：");
+                    string inputitem = Console.ReadLine();
+                    string cmd = cmdscript.UnMountNetDiskScript(inputitem);
+                    cmdscript.RunCMDscript(cmd);
+                    Console.Clear();
                 }
+                #endregion
+            }
 
-            }
-            else if (changecode == 8)
-            {
-                Console.Clear();
-                Console.Write("请输入要删除的盘符：");
-                string inputitem = Console.ReadLine();
-                string cmd= cmdscript.UnMountNetDiskScript(inputitem);
-                cmdscript.RunCMDscript(cmd);
-                Console.Clear();
-
-            }
-            else if (changecode == 9)
-            {
-                FunctionUserInitInvoke(conndetail);
-                Console.Clear();
-            }
-            if (changecode ==0)
-            {
-
-            }
         }
         /// <summary>
         /// 调用用户初始化方法
         /// </summary>
         /// <param name="conndetail">sql连接对象</param>
-        void FunctionUserInitInvoke(Conndetail conndetail)
+        void FunctionUserInitInvoke(Conndetail conndetail, UserInfo loginUserinfo)
         {
             SqlAction sqlAction = new SqlAction();
             var connet = sqlAction.ConneSql(conndetail);
             InitUser initUser = new InitUser();           
-            UserInfo userInfo= initUser.Init();
+            UserInfo userInfo= initUser.Init(loginUserinfo);
             sqlAction.UserInsert(userInfo, connet);
         }
         /// <summary>
         /// 调用用户登录方法
         /// </summary>
         /// <param name="conndetail">sql连接对象</param>
-        int FunctionUserLoginInvoke(Conndetail conndetail)
+        int FunctionUserLoginInvoke(Conndetail conndetail, UserInfo loginUserinfo)
         {
             SqlAction sqlAction = new SqlAction();
             var connet = sqlAction.ConneSql(conndetail);
             InitUser initUser = new InitUser();
-            UserInfo userInfoLogin = initUser.LoginUserInfo();
+            UserInfo userInfoLogin = initUser.LoginUserInfo(loginUserinfo);
             string cmd = sqlAction.SelectUser(userInfoLogin.UserName, userInfoLogin.Password);
             var dt= sqlAction.SeletScript(cmd, connet);
             if (dt!=null)

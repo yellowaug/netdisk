@@ -52,7 +52,7 @@ namespace NetdiskManager
         /// 挂载网络磁盘命令
         /// </summary>
         /// <returns>返回挂载脚本</returns>
-        public string MountNetDiskScript(string diskname,string remotePath)
+        public string MountNetDiskScript(string remotePath)
         {
             Random r = new Random(int.Parse(DateTime.Now.ToString("HHmmssfff")));
             int rannum = r.Next(72, 90);
