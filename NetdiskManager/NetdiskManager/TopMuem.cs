@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace NetdiskManager
 {
+    
     public class UserInfo
     {
         public string UserName { get; set; }
@@ -16,16 +17,18 @@ namespace NetdiskManager
     }
     public class TopMuem
     {
-        public void Stratmuem()
+        public int Stratmuem()
         {
             Console.WriteLine("=================================");
-            Console.WriteLine("1:连\t接\t项\t目");
+            Console.WriteLine("1:\t登\t录\t");
             Console.WriteLine();
-            Console.WriteLine("2:退\t出\t项\t目");
+            Console.WriteLine("9:用户信息录入(第一次使用程序的时候使用)");
             Console.WriteLine();
             Console.WriteLine("0:退\t出\t程\t序");
             Console.WriteLine("=================================");
-        }
+            Console.Write("请选择功能(输入完成按回车进入)：");
+            return int.Parse(Console.ReadLine());
+        }       
     }
     public class InitUser
     {
@@ -89,5 +92,28 @@ namespace NetdiskManager
             return userInfo;
 
         }
+
     }
+    public class ProjectMenuListInfo
+    {
+        /// <summary>
+        /// 项目列表打印
+        /// </summary>
+        /// <returns></returns>
+        public int Projectmenu(List<ProjectList> promenulist)
+        {
+            Console.WriteLine("=================================");
+            Console.WriteLine("项目编号\t项目名称");
+            foreach (ProjectList menuitem in promenulist)
+            {
+                Console.WriteLine(menuitem.ftid + "\t\t" + menuitem.FolderName);
+            }
+            Console.WriteLine("0：\t返回上级菜单");
+            Console.WriteLine("=================================");
+            Console.Write("请选择项目(输入完成按回车进入)：");
+            
+            return int.Parse(Console.ReadLine());
+        }
+    }
+
 }

@@ -16,6 +16,11 @@ namespace NetdiskManager
         public string DBName { get; set; }
 
     }
+    public class ProjectList
+    {
+        public string FolderName { get; set; }
+        public int ftid { get; set; }
+    }
     public class SqlAction
     {
         /// <summary>
@@ -32,8 +37,9 @@ namespace NetdiskManager
                 if (connection.State == ConnectionState.Closed)
                 {
                     connection.Open();
+                    Console.WriteLine("数据库连接正常");
                 }
-                Console.WriteLine(connection.State);
+                //Console.WriteLine(connection.State);
 
             }
             catch (Exception e)
@@ -77,7 +83,8 @@ namespace NetdiskManager
                 int result = insertcmd.ExecuteNonQuery();
                 if (result==1)
                 {
-                    Console.WriteLine("UserTable数据插入成功");
+                    //Console.WriteLine("UserTable数据插入成功");
+                    Console.WriteLine("用户输入数据写入成功");
                 }
 
             }
@@ -88,7 +95,7 @@ namespace NetdiskManager
         /// <returns></returns>
         public string SelectDisk()
         {
-            string cmd = "select*from FolderTable";
+            string cmd = "select foldername,ftid from FolderTable";
             return cmd;
         }
         /// <summary>
@@ -100,6 +107,16 @@ namespace NetdiskManager
         public string SelectUser(string userName,string passWord)
         {
             string cmd = String.Format($"select * from UserTable where username='{userName}'and password='{passWord}'");
+            return cmd;
+        }
+        /// <summary>
+        /// 根据项目编号查询项目
+        /// </summary>
+        /// <param name="code">项目编号</param>
+        /// <returns></returns>
+        public string SelectProjectCode(int code)
+        {
+            string cmd = String.Format($"select foldername from FolderTable where ftid={code}");
             return cmd;
         }
 

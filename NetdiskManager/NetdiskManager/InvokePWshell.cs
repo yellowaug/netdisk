@@ -11,9 +11,11 @@ namespace NetdiskManager
     public class InvokePWshell
     {
         /// <summary>
-        /// C#调用PWS命令持久化挂载网络硬盘。
+        /// PW命令挂载网盘
         /// </summary>
-        public void MountDiskShell()
+        /// <param name="remotePath"></param>
+        /// <param name="DiskNameCode"></param>
+        public void MountDiskShell(string remotePath)
         {
 
             ConsonlenList consonlenList = new ConsonlenList();
@@ -22,9 +24,9 @@ namespace NetdiskManager
             {
 
                 PowerShellInstance.AddCommand(shell.ShellMountNetDisk)
-                    .AddParameter("Name",shell.DiskPath)
+                    .AddParameter("Name", "Z")
                     .AddParameter("PSProvider", "FileSystem")
-                    .AddParameter("root",@"\\"+shell.ServerHost+@"\"+shell.FolderPath)
+                    .AddParameter("root",@"\\"+remotePath)
                     .AddParameter("Persist");
                 
                 Collection<PSObject> psResult = new Collection<PSObject>();
@@ -34,7 +36,7 @@ namespace NetdiskManager
                     Console.WriteLine(psResult.Count);
                     foreach (PSObject outputItem in psResult)
                     {
-                        if (outputItem.BaseObject.ToString() == shell.DiskPath)
+                        if (outputItem.BaseObject.ToString() == "Z")
                         {
                             Console.WriteLine("磁盘挂载成功");
                         };
@@ -43,7 +45,8 @@ namespace NetdiskManager
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.StackTrace);
                 }
                 
             }
