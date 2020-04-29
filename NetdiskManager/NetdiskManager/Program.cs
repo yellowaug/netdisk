@@ -27,12 +27,15 @@ namespace NetdiskManager
             //new Program().FunctionUserInitInvoke(conndetail);
             //new Program().FunctionUserLoginInvoke(conndetail);
             //new Program().FunctionprojectLists(conndetail);
-            CMDScript script = new CMDScript();
-            script.Cmditem();
+            //CMDScript script = new CMDScript();
+            //script.Cmditem();
             #endregion
-
-            //new Program().MenuAction();
-            Console.ReadKey();
+            while (true)
+            {
+               new Program().MenuAction();
+            }
+            
+            //Console.ReadKey();
         }
         /// <summary>
         /// 数据库连接初始化
@@ -55,6 +58,7 @@ namespace NetdiskManager
         {
             Conndetail conndetail = new Program().InitConnet();
             TopMuem topMuem = new TopMuem();
+            CMDScript cmdscript = new CMDScript();
 
             int changecode=topMuem.Stratmuem();
             if (changecode==1)
@@ -62,21 +66,43 @@ namespace NetdiskManager
                 int loginCode = FunctionUserLoginInvoke(conndetail);
                 if (loginCode==1)
                 {
+                    Console.Clear();
                     Console.WriteLine("登录成功");
+                    Console.WriteLine();
                     int code =FunctionprojectLists(conndetail);
                     string path=FunctionprojectPath(conndetail, code);
                     //挂载网盘
-                    new InvokePWshell().MountDiskShell(path);
+                    //new InvokePWshell().MountDiskShell(path);
+                    string cmdcls = cmdscript.MountNetDiskScript(@"Z:",path);
+                    cmdscript.RunCMDscript(cmdcls);
+                    Console.Clear();
+                    
                 }
                 else 
                 {
+                    Console.Clear();
                     Console.WriteLine("登录失败，重新登录");                    
                 }
 
             }
-            if (changecode == 9)
+            else if (changecode == 8)
+            {
+                Console.Clear();
+                Console.Write("请输入要删除的盘符：");
+                string inputitem = Console.ReadLine();
+                string cmd= cmdscript.UnMountNetDiskScript(inputitem);
+                cmdscript.RunCMDscript(cmd);
+                Console.Clear();
+
+            }
+            else if (changecode == 9)
             {
                 FunctionUserInitInvoke(conndetail);
+                Console.Clear();
+            }
+            if (changecode ==0)
+            {
+
             }
         }
         /// <summary>
@@ -132,7 +158,7 @@ namespace NetdiskManager
         /// <summary>
         /// 调用项目列表读取功能，查询数据库，显示项目列表
         /// </summary>
-        /// <param name="conndetail"></param>
+        /// <param name="conndetail">sql连接对象</param>
         /// <returns>返回用户输入的项目编号</returns>
         int FunctionprojectLists(Conndetail conndetail)
         {
@@ -171,6 +197,12 @@ namespace NetdiskManager
             }
             return promenu.Projectmenu(projectmenuLists);
         }
+        /// <summary>
+        /// 根据数据库查询结果，生成项目连接路径
+        /// </summary>
+        /// <param name="conndetail">sql连接对象</param>
+        /// <param name="projectcode">查询到的项目代码</param>
+        /// <returns>生成的项目路径</returns>
         string FunctionprojectPath(Conndetail conndetail,int projectcode)
         {
             SqlAction sqlAction = new SqlAction();
@@ -178,11 +210,11 @@ namespace NetdiskManager
             string cmd = sqlAction.SelectProjectCode(projectcode);
             var dt = sqlAction.SeletScript(cmd, connet);
             if (dt!=null)
-            {
-                
-                string remotePath = Path.Combine("10.12.2.19", dt.Rows[0][0].ToString());
+            {                
+                string remotePath = Path.Combine("10.12.2.19", dt.Rows[0][0].ToString());//远程主机IP
+                remotePath = String.Format($@"\\{remotePath}");
                 Console.WriteLine(@"查询到的项目路径为{0}",remotePath);
-                return dt.Rows[0][0].ToString();
+                return remotePath;
             }
             else
             {
@@ -190,6 +222,7 @@ namespace NetdiskManager
                 return null;
             }
         }
+
         
     }
 }

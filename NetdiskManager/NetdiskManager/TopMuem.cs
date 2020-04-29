@@ -22,9 +22,11 @@ namespace NetdiskManager
             Console.WriteLine("=================================");
             Console.WriteLine("1:\t登\t录\t");
             Console.WriteLine();
-            Console.WriteLine("9:用户信息录入(第一次使用程序的时候使用)");
+            Console.WriteLine("8:\t退\t出\t项\t目\t");
             Console.WriteLine();
-            Console.WriteLine("0:退\t出\t程\t序");
+            Console.WriteLine("9:\t用户信息录入(第一次使用程序的时候使用)");
+            Console.WriteLine();
+            Console.WriteLine("0:\t退\t出\t程\t序\t");
             Console.WriteLine("=================================");
             Console.Write("请选择功能(输入完成按回车进入)：");
             return int.Parse(Console.ReadLine());
@@ -108,12 +110,14 @@ namespace NetdiskManager
             {
                 Console.WriteLine(menuitem.ftid + "\t\t" + menuitem.FolderName);
             }
-            Console.WriteLine("0：\t返回上级菜单");
+
+            //Console.WriteLine("9：\t退出项目(删除挂载磁盘)");
             Console.WriteLine("=================================");
             Console.Write("请选择项目(输入完成按回车进入)：");
-            
-            return int.Parse(Console.ReadLine());
+            int code= int.Parse(Console.ReadLine());
+            return code;
         }
+
     }
 
 }
