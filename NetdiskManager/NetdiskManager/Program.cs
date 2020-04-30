@@ -43,7 +43,7 @@ namespace NetdiskManager
                 new Program().MenuAction();
             }
 
-            Console.ReadKey();
+            //Console.ReadKey();
         }
         /// <summary>
         /// 数据库连接初始化
@@ -52,8 +52,8 @@ namespace NetdiskManager
         Conndetail InitConnet()
         {
             Conndetail conndetail = new Conndetail();
-            //conndetail.ServerHost = "10.12.2.61";
-            conndetail.ServerHost = "127.0.0.1";
+            conndetail.ServerHost = "10.12.2.61";
+            //conndetail.ServerHost = "127.0.0.1";
             conndetail.DBName = "TestDemo";
             conndetail.DbUser = "sa";
             conndetail.DbPassword = "sa";
@@ -126,6 +126,7 @@ namespace NetdiskManager
             }
             else if (loginstatus!=null)
             {
+                Console.Clear();
                 #region 非第一次登录的页面
                 topMuem.SecondMenu();
                 

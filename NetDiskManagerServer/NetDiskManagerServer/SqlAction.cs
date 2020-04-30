@@ -16,6 +16,16 @@ namespace NetDiskManagerServer
         public string DBName { get; set; }
 
     }
+    public class ProjectInfo
+    {
+        public string ProjectName { get; set; }
+        public int ProjectCode { get; set; }
+    }
+    public class GroupNameInfo
+    {
+        public string GroupName { get; set; }
+        public string UserName { get; set; }
+    }
     public class SqlAction
     {
         /// <summary>
@@ -85,6 +95,60 @@ namespace NetDiskManagerServer
             }
             connection.Close();
         }
-
+        /// <summary>
+        /// 数据库查询功能模板
+        /// </summary>
+        /// <param name="connection">连接对象实体</param>
+        /// <param name="sqlCmd">查询语句</param>
+        /// <returns>查询内存对象</returns>
+        public DataTable SQLSelect(SqlConnection connection,string sqlCmd)
+        {
+            //List<ProjectInfo> projectinfoLists = new List<ProjectInfo>();
+            //string sqlStr = "select Foldername,Ftid from foldertable";
+            DataTable dt = null;
+            using (SqlCommand cmd = new SqlCommand(sqlCmd, connection))
+            {
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    dt = new DataTable();
+                    dt.Load(dr);
+                }
+                return dt;
+                //if (dt != null)
+                //{
+                //    for (int i = 0; i < dt.Rows.Count; i++)
+                //    {
+                //        ProjectInfo project = new ProjectInfo();
+                //        for (int j = 0; j < dt.Columns.Count; j++)
+                //        {
+                //            if (j % 2 == 0)
+                //            {
+                //                project.ProjectName = dt.Rows[i][j].ToString();
+                //                //Console.Write(projectmenu.FolderName);
+                //                //Console.Write("\t");
+                //            }
+                //            else if (j % 2 == 1)
+                //            {
+                //                project.ProjectCode = int.Parse(dt.Rows[i][j].ToString());
+                //                //Console.Write(projectmenu.ftid);
+                //            }
+                //        }
+                //        projectinfoLists.Add(project);
+                       
+                //    }
+                //}
+            }
+           
+        } 
+        public string SelectProject()
+        {
+            string sqlStr = "select Foldername,Ftid from foldertable";
+            return sqlStr;
+        }
+        public string SelectGroup()
+        {
+            string sqlStr = "select GroupName,Username from Usertable";
+            return sqlStr;
+        }
     }
 }

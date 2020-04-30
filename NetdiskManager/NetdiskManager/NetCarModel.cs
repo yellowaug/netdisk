@@ -26,7 +26,7 @@ namespace NetdiskManager
                 MacInfo.NetCarMac= adapter.GetPhysicalAddress().ToString();
                 
             }
-            Console.WriteLine(MacInfo.NetCarMac);
+            //Console.WriteLine(MacInfo.NetCarMac);
             return MacInfo;
         }
     }
