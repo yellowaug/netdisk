@@ -43,14 +43,13 @@ namespace NetDiskManagerServer
                 {
                     connection.Open();
                 }
-                Console.WriteLine(connection.State);
+                Console.WriteLine("数据库连接成功");
                
             }
             catch (Exception e)
             {
-                
+                Console.WriteLine("数据库连接异常！！！！");
                 Console.WriteLine(e.Message);               
-
             }
             return connection;
         }
@@ -87,11 +86,11 @@ namespace NetDiskManagerServer
             Random r = new Random(int.Parse(DateTime.Now.ToString("HHmmssfff")) );
             int num = r.Next(10000, 99999);//随机生成一个5位整数
             Console.WriteLine("num 的值是：" + num);
-            string cmdconten = String.Format($"insert into FolderTable (netpath,folderName,ftid,CreateDate) values('{folderinfo.NetPath}','{folderinfo.FolderName}',{num},'{folderinfo.Createtime}')");
+            string cmdconten = String.Format($"insert into FolderTable (netpath,folderName,ftid,CreateDate,ProjectName) values('{folderinfo.NetPath}','{folderinfo.FolderName}',{num},'{folderinfo.Createtime}','{folderinfo.ProjectName}')");
             using (SqlCommand insertcmd = new SqlCommand(cmdconten, connection))
             {
                 int result = insertcmd.ExecuteNonQuery();
-                Console.WriteLine("受影响行数" + result);
+                Console.WriteLine("受影响行数" + result+"数据写入数据库成功");
             }
             connection.Close();
         }
@@ -139,12 +138,20 @@ namespace NetDiskManagerServer
                 //}
             }
            
-        } 
+        }
+        /// <summary>
+        /// 查询项目的数据库语句
+        /// </summary>
+        /// <returns>sql语句</returns>
         public string SelectProject()
         {
-            string sqlStr = "select Foldername,Ftid from foldertable";
+            string sqlStr = "select ProjectName,Ftid from foldertable";
             return sqlStr;
         }
+        /// <summary>
+        /// 查询分组的数据库语句
+        /// </summary>
+        /// <returns>sql语句</returns>
         public string SelectGroup()
         {
             string sqlStr = "select GroupName,Username from Usertable";

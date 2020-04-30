@@ -14,13 +14,14 @@ namespace NetDiskManagerServer
         /// </summary>
         /// <param name="path">路径地址 如E:\</param>
         /// <param name="proName">文件夹名称</param>
-        public Folderinfo CreateAction(string path,string proName)
+        public Folderinfo CreateAction(string path,string proName,string localfolderName)
         {
             Folderinfo folderinfo = new Folderinfo();
-            folderinfo.FolderName = proName;
-            folderinfo.NetPath = "10.12.2.19";//这里有个IP
+            folderinfo.FolderName = localfolderName;
+            folderinfo.ProjectName = proName;
+            folderinfo.NetPath = "10.12.2.19";//插入数据库的IP
             folderinfo.Createtime= DateTime.Now.ToLocalTime();//获取当前时间
-            string pathStr = Path.Combine(path, proName);
+            string pathStr = Path.Combine(path, localfolderName);
             Console.WriteLine(pathStr);
             try
             {

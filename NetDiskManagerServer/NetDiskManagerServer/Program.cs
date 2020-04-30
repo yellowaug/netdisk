@@ -43,9 +43,13 @@ namespace NetDiskManagerServer
             //    Console.WriteLine(item);
             //}
             #endregion
-            MenuAction menuAction = new MenuAction();
-            menuAction.StartAction();
-            Console.ReadKey();
+            while (true)
+            {
+                MenuAction menuAction = new MenuAction();
+                menuAction.StartAction();
+            }
+           
+            //Console.ReadKey();
         }
     }
 }

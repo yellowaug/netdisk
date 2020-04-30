@@ -55,10 +55,10 @@ namespace NetDiskManagerServer
         public void AuthorityAssignresult(string inputProjecName, IDatabase db)
         {
             List<string> result = this.GetList(inputProjecName, db);
-            Console.WriteLine("项目名称\t权限列表");
+            Console.WriteLine("项目编号\t\t可访问小组编号");
             foreach (var item in result)
             {
-                Console.Write($"{inputProjecName}\t{item}");
+                Console.WriteLine($"{inputProjecName}\t\t\t{item}");
             }
         }
     }
@@ -130,6 +130,27 @@ namespace NetDiskManagerServer
                 }
             }
             return GroupNameInfo;
+        }
+    }
+    /// <summary>
+    /// 项目创建类
+    /// </summary>
+    public class FunctionFolder:SqlAction
+    {
+        /// <summary>
+        /// 创建项目文件夹
+        /// </summary>
+        /// <param name="diskpath">本地路径磁盘名称</param>
+        /// <param name="proName">项目名称</param>
+        /// <param name="connet">数据库连接对象</param>
+        public void CreateProject(string diskpath,string proName,SqlConnection connet)
+        {
+            Random r = new Random(int.Parse(DateTime.Now.ToString("HHmmssfff")));
+            int num = r.Next(100000, 999999);//随机生成一个6位整数
+            string localFolderName = String.Format($"{proName}{num}");
+            CreateFolder createFolder = new CreateFolder();
+            var createinfo = createFolder.CreateAction(diskpath,proName, localFolderName);
+            this.FolderInfoInser(connet, createinfo);
         }
     }
 }

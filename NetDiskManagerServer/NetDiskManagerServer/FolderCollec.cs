@@ -11,6 +11,7 @@ namespace NetDiskManagerServer
     {
         public string FolderName { get; set; }
         public string NetPath { get; set; }
+        public string ProjectName { get; set; }
         public DateTime Createtime { get; set; }        
     }
     public class CollectInfo
