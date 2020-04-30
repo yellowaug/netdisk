@@ -26,10 +26,10 @@ namespace NetdiskManager
         /// <param name="inpuetvalue">输入的值 value</param>
         /// <param name="db">数据库连接对象</param>
         /// <param name="inputKey">输入的KEY</param>
-        public void SetLoginStatus(string inpuetvalue, IDatabase db,string inputKey)
+        public void SetLoginStatus(string inpuetvalue, IDatabase db, string inputKey)
         {
             string key = inputKey;
-            string value = inpuetvalue;           
+            string value = inpuetvalue;
             if (db.StringSet(key, value))
             {
                 Console.WriteLine("数据插入Redis成功");
@@ -38,9 +38,9 @@ namespace NetdiskManager
             else
             {
                 Console.WriteLine("数据插入失败");
-                throw new Exception();               
+                throw new Exception();
             }
-            
+
         }
         /// <summary>
         /// 根据Key查询数据
@@ -52,6 +52,23 @@ namespace NetdiskManager
         {
             return db.StringGet(inputKey);
         }
+        /// <summary>
+        /// 根据Key值，获取链表所有值
+        /// </summary>
+        /// <param name="inputProjecName">项目名称，也可以是任意KEY值</param>
+        /// <param name="db">Redis数据库连接对象</param>
+        /// <returns>查询结果对象</returns>
+        public List<string> GetList(string inputProjecName, IDatabase db)
+        {
+            List<string> resultList = new List<string>();
+            //var a= db.ListLeftPop(inputProjecName);
+            var result = db.ListRange(inputProjecName);
+            foreach (var item in result)
+            {
+                resultList.Add(item);
+            }
+            return resultList;
 
+        }
     }
 }

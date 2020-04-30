@@ -120,7 +120,7 @@ namespace NetdiskManager
                 }
                 if (changecode == 0)
                 {
-                    
+                    Environment.Exit(0);
                 }
                 #endregion
             }

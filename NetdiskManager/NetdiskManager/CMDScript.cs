@@ -65,10 +65,19 @@ namespace NetdiskManager
         /// 卸载网络磁盘的方法
         /// </summary>
         /// <param name="diskname">需要卸载的盘符</param>
-        /// <returns></returns>
+        /// <returns>返回挂载脚本</returns>
         public string UnMountNetDiskScript(string diskname)
         {
             string unmunt = String.Format($@"net use {diskname}: /del");
+            return unmunt;
+        }
+        /// <summary>
+        /// 卸载所有网络磁盘的方法
+        /// </summary>
+        /// <returns>返回挂载脚本</returns>
+        public string UnMountAllDisScript()
+        {
+            string unmunt = String.Format($@"net use * /del");
             return unmunt;
         }
 
