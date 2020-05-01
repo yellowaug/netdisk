@@ -34,11 +34,19 @@ namespace NetdiskManager
             Console.Write("请选择功能(输入完成按回车进入)：");
             return int.Parse(Console.ReadLine());
         }
-        public void SecondMenu()
-        {
-            Console.WriteLine();
-            Console.WriteLine("8:\t退\t出\t项\t目\t");                        
-        }
+        //public void SecondMenu()
+        //{
+        //    Console.WriteLine();
+        //    Console.WriteLine("8:\t退\t出\t项\t目\t");                        
+        //}
+        /// <summary>
+        /// 功能菜单
+        /// </summary>
+        /// <param name="userInfo">用户信息</param>
+        /// <param name="sqlConnection">SQL连接对象</param>
+        /// <param name="redisdb">REDIS连接对象</param>
+        /// <param name="userMenu">用户菜单类</param>
+        /// <param name="projectMenuList">项目菜单类</param>
         public void FunctionMenu(UserInfo userInfo,SqlConnection sqlConnection,IDatabase redisdb,UserMenu userMenu,ProjectMenuListInfo projectMenuList)
         {           
             int funcCode = this.Stratmuem();
