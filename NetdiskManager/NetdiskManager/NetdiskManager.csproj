@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CMDScript.cs" />
+    <Compile Include="FunctionModel.cs" />
     <Compile Include="InvokePWshell.cs" />
     <Compile Include="NetCarModel.cs" />
     <Compile Include="Program.cs" />
@@ -88,7 +89,7 @@
     <Compile Include="RedisModel.cs" />
     <Compile Include="Shell.cs" />
     <Compile Include="SqlAction.cs" />
-    <Compile Include="TopMuem.cs" />
+    <Compile Include="ClineMuemModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

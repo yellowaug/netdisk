@@ -15,41 +15,50 @@ namespace NetdiskManager
         /// <param name="strInput">待执行的CMD命令</param>
         public void RunCMDscript(string strInput)
         {
-            //Console.WriteLine("请输入要执行的命令:");
-            //string strInput = Console.ReadLine();
-            Process p = new Process();
-            //设置要启动的应用程序
-            p.StartInfo.FileName = "cmd.exe";
-            //是否使用操作系统shell启动
-            p.StartInfo.UseShellExecute = false;
-            // 接受来自调用程序的输入信息
-            p.StartInfo.RedirectStandardInput = true;
-            //输出信息
-            p.StartInfo.RedirectStandardOutput = true;
-            // 输出错误
-            p.StartInfo.RedirectStandardError = true;
-            //不显示程序窗口
-            p.StartInfo.CreateNoWindow = true;
+            try
+            {
+                //Console.WriteLine("请输入要执行的命令:");
+                //string strInput = Console.ReadLine();
+                Process p = new Process();
+                //设置要启动的应用程序
+                p.StartInfo.FileName = "cmd.exe";
+                //是否使用操作系统shell启动
+                p.StartInfo.UseShellExecute = false;
+                // 接受来自调用程序的输入信息
+                p.StartInfo.RedirectStandardInput = true;
+                //输出信息
+                p.StartInfo.RedirectStandardOutput = true;
+                // 输出错误
+                p.StartInfo.RedirectStandardError = true;
+                //不显示程序窗口
+                p.StartInfo.CreateNoWindow = true;
 
-            p.StartInfo.Arguments = @"/c" + strInput;
-            //启动程序
-            p.Start();
+                p.StartInfo.Arguments = @"/c" + strInput;
+                //启动程序
+                p.Start();
 
-            //向cmd窗口发送输入信息
-            //p.StandardInput.WriteLine(strInput + "&exit");
+                //向cmd窗口发送输入信息
+                //p.StandardInput.WriteLine(strInput + "&exit");
 
+
+                p.StandardInput.AutoFlush = true;
+
+                //获取输出信息
+                string strOuput = p.StandardOutput.ReadToEnd();
+                //等待程序执行完退出进程
+                p.WaitForExit();
+                p.Close();
+                Console.WriteLine(strOuput);
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e);
+            }
             
-            p.StandardInput.AutoFlush = true;
-
-            //获取输出信息
-            string strOuput = p.StandardOutput.ReadToEnd();
-            //等待程序执行完退出进程
-            p.WaitForExit();
-            p.Close();
-            Console.WriteLine(strOuput);
         }  
         /// <summary>
-        /// 挂载网络磁盘命令
+        /// 挂载网络磁盘命令，随机生成连接盘符
         /// </summary>
         /// <returns>返回挂载脚本</returns>
         public string MountNetDiskScript(string remotePath)
@@ -57,8 +66,8 @@ namespace NetdiskManager
             Random r = new Random(int.Parse(DateTime.Now.ToString("HHmmssfff")));
             int rannum = r.Next(72, 90);
             char path = (char)rannum;
-
-            string mountscript = String.Format($@"net use {path}: {remotePath}");
+            string mountscript = String.Format($@"net use M: {remotePath}");
+            Console.WriteLine(mountscript);
             return mountscript;
         }
         /// <summary>

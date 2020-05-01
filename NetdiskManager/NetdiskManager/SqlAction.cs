@@ -18,10 +18,10 @@ namespace NetdiskManager
     }
     public class ProjectList
     {
-        public string FolderName { get; set; }
+        public string ProjectName { get; set; }
         public int ftid { get; set; }
     }
-    public class SqlAction
+    public class SqlAction:RedisModel
     {
         /// <summary>
         /// 连接SQL数据库的方法
@@ -95,7 +95,7 @@ namespace NetdiskManager
         /// <returns></returns>
         public string SelectDisk()
         {
-            string cmd = "select foldername,ftid from FolderTable";
+            string cmd = "select ProjectName,ftid from FolderTable";
             return cmd;
         }
         /// <summary>
@@ -119,6 +119,17 @@ namespace NetdiskManager
             string cmd = String.Format($"select foldername from FolderTable where ftid={code}");
             return cmd;
         }
+        /// <summary>
+        /// 根据用户名查询
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        public string SelectGroupID(string userName)
+        {
+            string cmd = String.Format($"select groupname from Usertable where username='{userName}'");
+            return cmd;
+        }
+
 
     }
 }

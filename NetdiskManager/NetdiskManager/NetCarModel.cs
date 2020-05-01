@@ -23,7 +23,14 @@ namespace NetdiskManager
             NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface adapter in adapters)
             {
-                MacInfo.NetCarMac= adapter.GetPhysicalAddress().ToString();
+                if (String.Equals(adapter.NetworkInterfaceType.ToString(),"Ethernet"))
+                {
+                    MacInfo.NetCarMac = adapter.GetPhysicalAddress().ToString();
+                }
+                else
+                {
+                    break;
+                }
                 
             }
             //Console.WriteLine(MacInfo.NetCarMac);
