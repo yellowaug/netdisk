@@ -8,6 +8,20 @@ using System.Data.SqlClient;
 
 namespace NetdiskManager
 {
+    /// <summary>
+    /// 数据库UserTable表
+    /// </summary>
+    public class UserInfo
+    {
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public int UTid { get; set; }
+        public string GroupName { get; set; }
+        public string UserComputerMac { get; set; }
+        public int deleteflag { get; set; }
+        public string UserRealName { get; set; }
+        public DateTime CreateDate { get; set; }
+    }
     public class Conndetail
     {
         public string ServerHost { get; set; }
@@ -76,7 +90,8 @@ namespace NetdiskManager
         /// <param name="connection">数据库连接对象</param>
         public void UserInsert(UserInfo userInfo, SqlConnection connection)
         {
-            string cmdconten = String.Format($"insert into UserTable (Username,GroupName,Password,Utid,CreateDate) values('{userInfo.UserName}','{userInfo.GroupName}',{userInfo.Password},'{userInfo.UTid}','{userInfo.CreateDate}')");
+            string cmdconten = String.Format($"insert into UserTable (Username,GroupName,Password,Utid,CreateDate,UserComputerMac,deleteflag,UserRealName) " +
+                $"values('{userInfo.UserName}','{userInfo.GroupName}',{userInfo.Password},'{userInfo.UTid}','{userInfo.CreateDate}','{userInfo.UserComputerMac}','{userInfo.deleteflag}','{userInfo.UserRealName}')");
             using (SqlCommand insertcmd = new SqlCommand(cmdconten, connection))
             {
 
@@ -85,6 +100,29 @@ namespace NetdiskManager
                 {
                     //Console.WriteLine("UserTable数据插入成功");
                     Console.WriteLine("用户输入数据写入成功");
+                }
+
+            }
+        }
+        /// <summary>
+        /// 数据库更新功能
+        /// </summary>
+        /// <param name="sqlSricpt"></param>
+        /// <param name="connection"></param>
+        public void UpdataSQL(string sqlSricpt, SqlConnection connection)
+        {
+            using (SqlCommand updatacmd = new SqlCommand(sqlSricpt, connection))
+            {
+
+                int result = updatacmd.ExecuteNonQuery();
+                if (result == 1)
+                {
+                    //Console.WriteLine("UserTable数据插入成功");
+                    Console.WriteLine("用户更新数据写入成功");
+                }
+                else
+                {
+                    Console.WriteLine("用户更新数据失败");
                 }
 
             }
@@ -106,7 +144,7 @@ namespace NetdiskManager
         /// <returns></returns>
         public string SelectUser(string userName,string passWord)
         {
-            string cmd = String.Format($"select * from UserTable where username='{userName}'and password='{passWord}'");
+            string cmd = String.Format($"select * from UserTable where username='{userName}'and password='{passWord}' and deleteflag=0");
             return cmd;
         }
         /// <summary>
@@ -126,10 +164,20 @@ namespace NetdiskManager
         /// <returns></returns>
         public string SelectGroupID(string userName)
         {
-            string cmd = String.Format($"select groupname from Usertable where username='{userName}'");
+            string cmd = String.Format($"select groupname from Usertable where username='{userName}'and deleteflag=0");
             return cmd;
         }
-
+        /// <summary>
+        /// 更新删除标志的语句
+        /// </summary>
+        /// <param name="loginUsername">用户名</param>
+        /// <returns></returns>
+        public string UpdataDeleteFlag(string loginUsername)
+        {
+            string cmd = String.Format($"update usertable set deleteflag=1 where username='{loginUsername}'");
+            return cmd;
+                
+        }
 
     }
 }

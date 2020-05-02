@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace NetdiskManager
 {
@@ -63,11 +64,38 @@ namespace NetdiskManager
         /// <returns>返回挂载脚本</returns>
         public string MountNetDiskScript(string remotePath)
         {
+
             Random r = new Random(int.Parse(DateTime.Now.ToString("HHmmssfff")));
             int rannum = r.Next(72, 90);
             char path = (char)rannum;
-            string mountscript = String.Format($@"net use M: {remotePath}");
-            Console.WriteLine(mountscript);
+            DriveInfo[] allDrives = DriveInfo.GetDrives();
+            string mountscript = null;
+            foreach (var driveitem in allDrives)
+            {
+                if (String.Equals($@"{path}:\",driveitem.Name))
+                {
+                    Console.WriteLine($"检测到网络路径已存在{driveitem.Name},程序将自动生成其他盘符");
+                }
+                else
+                {
+                    mountscript = String.Format($@"net use {path}: {remotePath}");
+                    break;
+                }
+            }
+
+            Console.WriteLine($"生成的命令行为：{mountscript}");
+            try
+            {
+                Directory.SetCurrentDirectory(remotePath);
+                Console.WriteLine("项目路径可正常访问，挂载项目中。。。");
+                
+            }
+            catch (Exception direx)
+            {
+                Console.WriteLine("项目路径访问异常，请联系管理员检测该项目文件夹的共享权限，或网络是否异常");
+                Console.WriteLine(direx);
+                
+            }
             return mountscript;
         }
         /// <summary>
@@ -77,6 +105,7 @@ namespace NetdiskManager
         /// <returns>返回挂载脚本</returns>
         public string UnMountNetDiskScript(string diskname)
         {
+
             string unmunt = String.Format($@"net use {diskname}: /del");
             return unmunt;
         }

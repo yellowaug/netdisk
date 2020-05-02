@@ -28,6 +28,7 @@ namespace NetdiskManager
             //new Program().FunctionUserLoginInvoke(conndetail);
             //new Program().FunctionprojectLists(conndetail);
             //CMDScript script = new CMDScript();
+            //script.MountNetDiskScript(@"\\127.0.0.1\测试项目");
             //script.Cmditem();
             #region redis测试代码
             //Conndetail conndetail = new Conndetail();
@@ -72,7 +73,7 @@ namespace NetdiskManager
             //    new Program().MenuAction();
             //}
 
-            Console.ReadKey();
+            //Console.ReadKey();
         }
         /// <summary>
         /// 数据库连接初始化

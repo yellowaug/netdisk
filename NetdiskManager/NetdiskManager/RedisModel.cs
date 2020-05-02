@@ -70,5 +70,43 @@ namespace NetdiskManager
             return resultList;
 
         }
+        public void SetList(string inputkey,string inputvalue,IDatabase redisdb)
+        {
+            try
+            {
+                long flag= redisdb.ListLeftPush(inputkey, inputvalue);
+                if (flag!=0)
+                {
+                    Console.WriteLine($"{inputvalue}写入redis成功");
+                }
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e);
+            }
+            
+        }
+        /// <summary>
+        /// 删除redis key的方法
+        /// </summary>
+        /// <param name="inputkey">要删除的KEY</param>
+        /// <param name="db">redisdb连接对象</param>
+        public void DelKey(string inputkey, IDatabase db)
+        {
+            try
+            {
+                if (db.KeyDelete(inputkey))
+                {
+                    Console.WriteLine($"{inputkey}删除成功");
+                }
+                
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e); ;
+            }
+        }
     }
 }

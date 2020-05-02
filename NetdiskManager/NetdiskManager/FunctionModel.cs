@@ -69,6 +69,7 @@ namespace NetdiskManager
             string rediskey = String.Format($"init{netCarInfo.NetCarMac}");
             this.SetLoginStatus("inited", redisdb, rediskey);
         }
+        
     }
     public class FunctionUserLogin: SqlAction
     {
@@ -97,10 +98,15 @@ namespace NetdiskManager
             //    return dt.Rows.Count;
             //}
         }
+        /// <summary>
+        /// 设置用户登录状态，写入redis
+        /// </summary>
+        /// <param name="redisdb"></param>
+        /// <param name="loginName"></param>
         public void SetUserLoginStatus(IDatabase redisdb,string loginName)
         {
             NetCarModel netCarModel = new NetCarModel();
-            RedisModel redis = new RedisModel();
+            //RedisModel redis = new RedisModel();
             NetCarInfo netCarInfo = netCarModel.GetNetCarMac();
             string rediskey = String.Format($"loginstatus{netCarInfo.NetCarMac}");
             this.SetLoginStatus(loginName, redisdb, rediskey);
@@ -173,27 +179,126 @@ namespace NetdiskManager
                                    
         }
         /// <summary>
-        /// 根据项目编号生成网盘挂载路径
+        /// 根据项目编号生成网盘挂载路径,并在redis生成项目连接列表,检查输入的项目编号是否为重复输入
         /// </summary>
         /// <param name="connection">数据库连接对象</param>
         /// <param name="projectcode">项目编码</param>
         /// <returns></returns>
-        public string GenerateProjectPath(SqlConnection connection, int projectcode)
+        public string GenerateProjectPath(SqlConnection connection, int projectcode, IDatabase redisdb)
         {                      
             string cmd = this.SelectProjectCode(projectcode);
-            var dt = this.SeletScript(cmd, connection);
-            if (dt != null)
+            var dt = this.SeletScript(cmd, connection);            
+            if (dt.Rows.Count !=0)
             {
+                NetCarInfo netCarInfo = new NetCarModel().GetNetCarMac();
+                string rediskey = String.Format($"projectpath{netCarInfo.NetCarMac}");
+                List<string> pathlist = this.GetList(rediskey, redisdb);
                 string remotePath = Path.Combine("127.0.0.1", dt.Rows[0][0].ToString());//远程主机IP
                 remotePath = String.Format($@"\\{remotePath}");
-                Console.WriteLine(@"查询到的项目路径为{0}", remotePath);
-                return remotePath;
+                try
+                {
+                    Directory.SetCurrentDirectory(remotePath); //判断生成的原创路径是否可以访问
+                    if (pathlist.Count == 0)
+                    {
+                        this.SetList(rediskey, remotePath, redisdb);
+                        Console.WriteLine(@"查询到的项目路径为{0}", remotePath);
+                    }
+                    else
+                    {
+                        foreach (var pathitem in pathlist)
+                        {
+                            if (pathitem != remotePath || pathitem == null)
+                            {
+                                this.SetList(rediskey, remotePath, redisdb);
+                                Console.WriteLine(@"查询到的项目路径为{0}", remotePath);
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("输入的项目编号重复");
+                                remotePath = null;
+                                break;
+                            }
+                        }
+                    }
+                    return remotePath;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("网络路径无法正常访问，请连接你们的项目管理员检测下项目文件是否有共享权限，以及网络是否正常");
+                    Console.WriteLine(e);
+                    return null;
+                }              
             }
             else
             {
                 Console.WriteLine("项目编号输入错误");
                 return null;
             }
+        }
+        /// <summary>
+        /// 自动加载已连接过的网盘项目
+        /// </summary>
+        /// <param name="redisdb"></param>
+        public void AutoMountNetDisk(IDatabase redisdb)
+        {
+            NetCarInfo netCarInfo = new NetCarModel().GetNetCarMac();
+            string rediskey = String.Format($"projectpath{netCarInfo.NetCarMac}");
+            List<string>pathlist= this.GetList(rediskey, redisdb);
+            if (pathlist.Count!=0)
+            {
+                CMDScript script = new CMDScript();
+                foreach (var pathitem in pathlist)
+                {
+                    string cmd = script.MountNetDiskScript(pathitem);
+                    script.RunCMDscript(cmd);
+                }
+            }
+            else
+            {
+                Console.WriteLine("------------------------------------------------------------------");
+                Console.WriteLine("你还未连接过项目，请连接过项目后再使用此功能,按任意键返回项目菜单");
+                Console.WriteLine("------------------------------------------------------------------");
+                Console.ReadKey();
+                Console.Clear();
+            }
+            
+        }
+
+    }
+    /// <summary>
+    /// 功能重置类
+    /// </summary>
+    public class FunctionReset:SqlAction
+    {        
+        static NetCarModel NetCar = new NetCarModel();
+        /// <summary>
+        /// 重置用户初始化状态的方法
+        /// </summary>
+        /// <param name="redisdb">redis连接对象</param>
+        public void ResetInitstatus(IDatabase redisdb, SqlConnection connection,string loginUserName)
+        {
+            NetCarInfo netCarInfo = NetCar.GetNetCarMac();
+            string delkey = String.Format($"init{netCarInfo.NetCarMac}");
+            string dellogkey = String.Format($"loginstatus{netCarInfo.NetCarMac}");
+            string delprokey= String.Format($"projectpath{netCarInfo.NetCarMac}");
+            this.DelKey(delkey, redisdb);
+            this.DelKey(dellogkey, redisdb);
+            this.DelKey(delprokey, redisdb);
+            string sqlcmd = this.UpdataDeleteFlag(loginUserName);
+            this.UpdataSQL(sqlcmd, connection);
+        }
+        /// <summary>
+        /// 重置用户登录状态的方法
+        /// </summary>
+        /// <param name="redisdb">redis连接对象</param>
+        public void ResetLoginStatus(IDatabase redisdb)
+        {
+            NetCarInfo netCarInfo = NetCar.GetNetCarMac();
+            string delkey = String.Format($"loginstatus{netCarInfo.NetCarMac}");
+            string delprokey = String.Format($"projectpath{netCarInfo.NetCarMac}");
+            this.DelKey(delprokey, redisdb);
+            this.DelKey(delkey, redisdb);
         }
     }
 }
