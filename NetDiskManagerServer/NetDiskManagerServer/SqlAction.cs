@@ -154,7 +154,7 @@ namespace NetDiskManagerServer
         /// <returns>sql语句</returns>
         public string SelectGroup()
         {
-            string sqlStr = "select GroupName,Username from Usertable";
+            string sqlStr = "select GroupName,Username from Usertable where deleteflag=0";
             return sqlStr;
         }
     }
