@@ -82,8 +82,8 @@ namespace NetdiskManager
         Conndetail InitConnet()
         {
             Conndetail conndetail = new Conndetail();
-            //conndetail.ServerHost = "10.12.2.61";
-            conndetail.ServerHost = "127.0.0.1";
+            conndetail.ServerHost = "10.12.2.61";
+            //conndetail.ServerHost = "127.0.0.1";
             conndetail.DBName = "TestDemo";
             conndetail.DbUser = "sa";
             conndetail.DbPassword = "sa";

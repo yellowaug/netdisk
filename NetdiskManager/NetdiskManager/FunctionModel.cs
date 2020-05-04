@@ -193,7 +193,8 @@ namespace NetdiskManager
                 NetCarInfo netCarInfo = new NetCarModel().GetNetCarMac();
                 string rediskey = String.Format($"projectpath{netCarInfo.NetCarMac}");
                 List<string> pathlist = this.GetList(rediskey, redisdb);
-                string remotePath = Path.Combine("127.0.0.1", dt.Rows[0][0].ToString());//远程主机IP
+                //string remotePath = Path.Combine("127.0.0.1", dt.Rows[0][0].ToString());//远程主机IP
+                string remotePath = Path.Combine("10.12.2.61", dt.Rows[0][0].ToString());//远程主机IP
                 remotePath = String.Format($@"\\{remotePath}");
                 try
                 {
